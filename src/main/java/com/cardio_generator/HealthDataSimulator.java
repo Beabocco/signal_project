@@ -27,7 +27,7 @@ import java.util.ArrayList;
 /**
 * simulates health data for a given number or parients utilizing different data generators.
 * The generated data is then outputted using different strategies.
-**/
+*/
 public class HealthDataSimulator {
 
     private static int patientCount = 50; // Default number of patients
@@ -37,9 +37,9 @@ public class HealthDataSimulator {
     
 /** the main method.  It handles the parsing of command-line arguments, sets up required components,
  * and schedules tasks for generating health data.
- * @param args Command line arguments
+ * @param {String[]} args Command line arguments
  * @throws IOException If an I/O error occurs during argument parsing
-**/
+*/
     public static void main(String[] args) throws IOException {
 
         parseArguments(args);
@@ -53,9 +53,9 @@ public class HealthDataSimulator {
     }
 /** Parses command line arguments to determine the number of patients to simulate
  * and the output strategy for the generated data.
- * @param args Command line arguments passed to the application.
+ * @param {String[]} args Command line arguments passed to the application.
  * @throws IOException If there's an issue while reading or processing the command line arguments.
-**/
+ */
     private static void parseArguments(String[] args) throws IOException {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -116,7 +116,9 @@ public class HealthDataSimulator {
             }
         }
     }
-    /**prints all the informations.**/
+    /**
+    *prints all the informations.
+    */
 
     private static void printHelp() {
         System.out.println("Usage: java HealthDataSimulator [options]");
@@ -135,9 +137,9 @@ public class HealthDataSimulator {
                 "  This command simulates data for 100 patients and sends the output to WebSocket clients connected to port 8080.");
     }
 /** initializes a list of patients IDs, starting from number one. 
- * @param patientCount The number of patients.
+ * @param {int} patientCount The number of patients.
  * @return A list of patient IDs.
-**/
+ */
     private static List<Integer> initializePatientIds(int patientCount) {
         List<Integer> patientIds = new ArrayList<>();
         for (int i = 1; i <= patientCount; i++) {
