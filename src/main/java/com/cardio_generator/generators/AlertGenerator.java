@@ -3,18 +3,34 @@ package com.cardio_generator.generators;
 import java.util.Random;
 
 import com.cardio_generator.outputs.OutputStrategy;
-
+/**
+ * Generates simulated alert data for patient.
+ * Alerts are represented as boolean values, where false indicates that the alertis resolved, 
+ * and true indicates that the alert is triggered.
+ */
 public class AlertGenerator implements PatientDataGenerator {
 
     public static final Random randomGenerator = new Random();
     //changed variable name to camelCase
     private boolean[] alertStates; // false = resolved, true = pressed
-
+/** 
+* constructor of the AlertGenerator class.
+* @parem {int} patientCount the number of patients for which alert data will be simulated.
+*/
     public AlertGenerator(int patientCount) {
         //changed variable name to camelCase
         alertStates = new boolean[patientCount + 1];
     }
-
+/**
+* Generates alert data for a specific patient and outputs it using the provided strategy.
+*
+* If an alert is triggered, it is output as "triggered"; if a previously
+* triggered alert is resolved, it is output as "resolved".
+*
+* @param patientId The ID of the patient for which data is generated.
+* @param outputStrategy The output strategy used to output the generated data.
+* @throws Exception if an error occurs during data generation or output.
+*/
     @Override
     public void generate(int patientId, OutputStrategy outputStrategy) {
         try {
