@@ -35,13 +35,10 @@ public class DataStorage {
      * @param timestamp        the time at which the measurement was taken, in
      *                         milliseconds since the Unix epoch
      */
-    public void addPatientData(int patientId, double measurementValue, String recordType, long timestamp) {
-        Patient patient = patientMap.get(patientId);
-        if (patient == null) {
-            patient = new Patient(patientId);
-            patientMap.put(patientId, patient);
-        }
+    public synchronized void addPatientData(int patientId, double measurementValue, String recordType, long timestamp) {
+        Patient patient = patientMap.getOrDefault(patientId, new Patient(patientId));
         patient.addRecord(measurementValue, recordType, timestamp);
+        patientMap.put(patientId, patient);
     }
 
     /**

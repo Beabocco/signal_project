@@ -2,6 +2,7 @@ package com.data_management;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -77,5 +78,11 @@ public class FileDataReader implements DataReader {
         } else {
             System.err.println("Invalid data format in line: " + line);
         }
+    }
+
+    @Override
+    public void readRealTimeData(String websocketUrl) throws URISyntaxException, InterruptedException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'readRealTimeData'");
     }
 }
