@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.ConcurrentHashMap;
 /**
@@ -21,7 +22,7 @@ public class FileOutputStrategy implements OutputStrategy {
 * @param {String} baseDirectory The base directory where output files will be stored.
 */
     //the constructor should have the same name as the class
-    public fileOutputStrategy(String baseDirectory) {
+    public FileOutputStrategy(String baseDirectory) {
 
         this.baseDirectory = baseDirectory; //changed variable name to camelCase
     }
@@ -46,9 +47,9 @@ public class FileOutputStrategy implements OutputStrategy {
         }
         
         // Set the FilePath variable
-        String FilePath = file_map.computeIfAbsent(label, k -> Paths.get(BaseDirectory, label + ".txt").toString());
+        String FilePath = file_map.computeIfAbsent(label, k -> Paths.get(baseDirectory, label + ".txt").toString());
         //create a path object so it's easier to use it later
-        Path file = Paths.get(filePath);
+        Path file = Paths.get(FilePath);
 
         // Write the data to the file
         try (PrintWriter out = new PrintWriter(

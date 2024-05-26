@@ -8,7 +8,7 @@ import com.cardio_generator.outputs.OutputStrategy;
  * Alerts are represented as boolean values, where false indicates that the alertis resolved, 
  * and true indicates that the alert is triggered.
  */
-public class AlertGenerator implements PatientDataGenerator {
+public class SimulatedAlertGenerator implements PatientDataGenerator {
 
     public static final Random randomGenerator = new Random();
     //changed variable name to camelCase
@@ -17,7 +17,7 @@ public class AlertGenerator implements PatientDataGenerator {
 * constructor of the AlertGenerator class.
 * @parem {int} patientCount the number of patients for which alert data will be simulated.
 */
-    public AlertGenerator(int patientCount) {
+    public SimulatedAlertGenerator(int patientCount) {
         //changed variable name to camelCase
         alertStates = new boolean[patientCount + 1];
     }
@@ -36,7 +36,7 @@ public class AlertGenerator implements PatientDataGenerator {
         try {
             if (alertStates[patientId]) { //changed variable name to camelCase
                 if (randomGenerator.nextDouble() < 0.9) { // 90% chance to resolve
-                    AlertStates[patientId] = false;
+                    alertStates[patientId] = false;
                     // Output the alert
                     outputStrategy.output(patientId, System.currentTimeMillis(), "Alert", "resolved");
                 }
@@ -47,7 +47,7 @@ public class AlertGenerator implements PatientDataGenerator {
                 boolean alertTriggered = randomGenerator.nextDouble() < p;
 
                 if (alertTriggered) {
-                    AlertStates[patientId] = true;
+                    alertStates[patientId] = true;
                     // Output the alert
                     outputStrategy.output(patientId, System.currentTimeMillis(), "Alert", "triggered");
                 }
