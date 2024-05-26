@@ -55,3 +55,5 @@ public class Patient {
         // TODO Implement and test this method
     }
 }
+
+}
