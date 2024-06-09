@@ -3,12 +3,20 @@ package com.cardio_generator.generators;
 import java.util.Random;
 
 import com.cardio_generator.outputs.OutputStrategy;
-
+/**
+ * Generates simulated ECG data for patients.
+ * This class simulates ECG readings for each patient and outputs the data using the provided output strategy.
+ */
 public class ECGDataGenerator implements PatientDataGenerator {
     private static final Random random = new Random();
     private double[] lastEcgValues;
     private static final double PI = Math.PI;
-
+    /**
+     * Constructor for ECGDataGenerator.
+     * Initializes the last ECG value for each patient.
+     *
+     * @param patientCount the number of patients for which data will be generated
+     */
     public ECGDataGenerator(int patientCount) {
         lastEcgValues = new double[patientCount + 1];
         // Initialize the last ECG value for each patient
@@ -16,7 +24,12 @@ public class ECGDataGenerator implements PatientDataGenerator {
             lastEcgValues[i] = 0; // Initial ECG value can be set to 0
         }
     }
-
+    /**
+     * Generates ECG data for a specific patient and outputs it using the provided strategy.
+     *
+     * @param patientId the ID of the patient for whom data is generated
+     * @param outputStrategy the output strategy used to output the generated data
+     */
     @Override
     public void generate(int patientId, OutputStrategy outputStrategy) {
     
@@ -29,7 +42,13 @@ public class ECGDataGenerator implements PatientDataGenerator {
             e.printStackTrace(); // This will print the stack trace to help identify where the error occurred.
         }
     }
-
+    /**
+     * Simulates the ECG waveform for a patient based on a simple model.
+     *
+     * @param patientId the ID of the patient
+     * @param lastEcgValue the last ECG value for the patient
+     * @return the simulated ECG value
+     */
     private double simulateEcgWaveform(int patientId, double lastEcgValue) {
         // Simplified ECG waveform generation based on sinusoids
         double hr = 60.0 + random.nextDouble() * 20.0; // Simulate heart rate variability between 60 and 80 bpm

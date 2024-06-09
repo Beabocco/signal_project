@@ -47,4 +47,22 @@ public class Alert {
     public String getMessage() {
         return message;
     }
+    // Subclasses for specific alert types
+    public static class BloodPressureAlert extends Alert {
+        public BloodPressureAlert(int patientId, long timestamp, String message) {
+        super(patientId, timestamp, message);
+        }
+    }
+
+    public static class BloodOxygenAlert extends Alert {
+        public BloodOxygenAlert(int patientId, long timestamp, String message) {
+        super(patientId, timestamp, message);
+        }
+    }
+
+    public static class ECGAlert extends Alert {
+        public ECGAlert(int patientId, long timestamp, String message) {
+        super(patientId, timestamp, message);
+        }
+    }
 }

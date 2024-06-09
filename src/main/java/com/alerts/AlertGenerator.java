@@ -6,6 +6,9 @@ import com.data_management.PatientRecord;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * The {@code AlertGenerator} class is responsible for monitoring patient data
@@ -16,6 +19,9 @@ import java.util.List;
 public class AlertGenerator {
     private DataStorage dataStorage;
     private List<Alert> alerts;
+    private Map<String, AlertStrategy> strategies;
+    private Map<String, AlertFactory> factories;
+
 
     /**
      * Constructs an {@code AlertGenerator} with a specified {@code DataStorage}.
@@ -28,7 +34,30 @@ public class AlertGenerator {
     public AlertGenerator(DataStorage dataStorage) {
         this.dataStorage = dataStorage;
         this.alerts = new ArrayList<>();
+        this.strategies = new HashMap<>();
+        this.factories = new HashMap<>();
+        initializeStrategies();
+        initializeFactories();
     }
+    /**
+     * Initializes alert strategies for different record types.
+     */
+    public void initializeStrategies() {
+        strategies.put("BloodPressure", new BloodPressureStrategy());
+        strategies.put("HeartRate", new HeartRateStrategy());
+        strategies.put("OxygenSaturation", new OxygenSaturationStrategy());
+        
+    }
+    /**
+     * Initializes alert factories for different record types.
+     */
+    public void initializeFactories() {
+        factories.put("BloodPressure", new BloodPressureAlertFactory());
+        factories.put("HeartRate", new ECGAlertFactory()); // Assuming HeartRate and ECG use the same factory
+        factories.put("OxygenSaturation", new BloodOxygenAlertFactory());
+        
+    }
+
 
     /**
      * Evaluates the specified patient's data to determine if any alert conditions
@@ -42,103 +71,52 @@ public class AlertGenerator {
      */
     public void evaluateData(Patient patient) {
         List<PatientRecord> records = patient.getPatientRecords();
-
         for (PatientRecord record : records) {
-            switch (record.getRecordType()) {
-                case "HeartRate":
-                    checkHeartRate(record);
-                    break;
-                case "BloodPressure":
-                    checkBloodPressure(record);
-                    break;
-                case "OxygenSaturation":
-                    checkOxygenSaturation(record);
-                    break;
-                case "Temperature":
-                    checkTemperature(record);
-                    break;
-                case "RespiratoryRate":
-                    checkRespiratoryRate(record);
-                    break;
-                default:
-                    break;
+            AlertStrategy strategy = strategies.get(record.getRecordType());
+            AlertFactory factory = factories.get(record.getRecordType());
+            if (strategy != null && factory != null) {
+                strategy.checkAlert(record, alerts, factory);
             }
         }
     }
-
     /**
-     * Checks if the heart rate is within the normal range and generates an alert if not.
+     * Generates an alert based on the specified record and message, adding decorators.
      *
-     * @param record the PatientRecord to be checked
-     */
-    private void checkHeartRate(PatientRecord record) {
-        double heartRate = record.getMeasurementValue();
-        if (heartRate < 60 || heartRate > 100) {
-            generateAlert(record, "Abnormal heart rate detected: " + heartRate);
-        }
-    }
-
-    /**
-     * Checks if the blood pressure is within the normal range and generates an alert if not.
-     *
-     * @param record the PatientRecord to be checked
-     */
-    private void checkBloodPressure(PatientRecord record) {
-        double bloodPressure = record.getMeasurementValue();
-        // Assuming the blood pressure value represents systolic pressure
-        if (bloodPressure < 90 || bloodPressure > 140) {
-            generateAlert(record, "Abnormal blood pressure detected: " + bloodPressure);
-        }
-    }
-
-    /**
-     * Checks if the oxygen saturation is within the normal range and generates an alert if not.
-     *
-     * @param record the PatientRecord to be checked
-     */
-    private void checkOxygenSaturation(PatientRecord record) {
-        double oxygenSaturation = record.getMeasurementValue();
-        if (oxygenSaturation < 95) {
-            generateAlert(record, "Low oxygen saturation detected: " + oxygenSaturation);
-        }
-    }
-
-    /**
-     * Checks if the temperature is within the normal range and generates an alert if not.
-     *
-     * @param record the PatientRecord to be checked
-     */
-    private void checkTemperature(PatientRecord record) {
-        double temperature = record.getMeasurementValue();
-        if (temperature < 36.1 || temperature > 37.2) {
-            generateAlert(record, "Abnormal temperature detected: " + temperature);
-        }
-    }
-
-    /**
-     * Checks if the respiratory rate is within the normal range and generates an alert if not.
-     *
-     * @param record the PatientRecord to be checked
-     */
-    private void checkRespiratoryRate(PatientRecord record) {
-        double respiratoryRate = record.getMeasurementValue();
-        if (respiratoryRate < 12 || respiratoryRate > 20) {
-            generateAlert(record, "Abnormal respiratory rate detected: " + respiratoryRate);
-        }
-    }
-
-    /**
-     * Generates an alert based on the specified record and message.
-     *
-     * @param record the PatientRecord that triggered the alert
+     * @param record  the PatientRecord that triggered the alert
      * @param message the alert message
      */
-    private void generateAlert(PatientRecord record, String message) {
-        Alert alert = new Alert(record.getPatientId(), record.getTimestamp(), message);
-        alerts.add(alert);
-        System.out.println("Alert generated: " + message);
-    }
+    public void generateAlert(PatientRecord record, String message) {
+        System.out.println("generateAlert called with record: " + record + " and message: " + message);
+        Alert alert = null;
+        switch (record.getRecordType()) {
+            case "BloodPressure":
+                System.out.println("Creating BloodPressureAlert");
+                alert = new Alert.BloodPressureAlert(record.getPatientId(), record.getTimestamp(), message);
+                break;
+            case "OxygenSaturation":
+                System.out.println("Creating BloodOxygenAlert");
+                alert = new Alert.BloodOxygenAlert(record.getPatientId(), record.getTimestamp(), message);
+                break;
+            case "HeartRate":
+            case "ECG":
+                System.out.println("Creating ECGAlert");
+                alert = new Alert.ECGAlert(record.getPatientId(), record.getTimestamp(), message);
+                break;
+            default:
+                System.out.println("Unknown record type: " + record.getRecordType());
+        }
 
+        if (alert != null) {
+            System.out.println("Decorating alert");
+            alert = new PriorityAlertDecorator(alert, "High");
+            alert = new RepeatedAlertDecorator(alert, 3);
+            alerts.add(alert);
+            System.out.println("Alert generated: " + alert.getMessage());
+        } else {
+            System.out.println("Alert not created due to unknown record type.");
+        }
+    }
+    
     /**
      * Returns the list of generated alerts.
      *

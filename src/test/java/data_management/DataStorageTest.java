@@ -8,16 +8,22 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import com.data_management.DataStorage;
 import com.data_management.PatientRecord;
-
+/**
+ * Unit tests for the DataStorage class.
+ */
 public class DataStorageTest {
 
     private DataStorage dataStorage;
-
+    /**
+     * Sets up the DataStorage instance before each test.
+     */
     @BeforeEach
     void setUp() {
         dataStorage = new DataStorage();
     }
-
+    /**
+     * Tests adding and retrieving records in DataStorage.
+     */
     @Test
     void testAddAndGetRecords() {
         int patientId = 1;
